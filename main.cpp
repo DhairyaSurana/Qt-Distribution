@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    // Adding this comment to test commit
 
         // Assign names to the set of bars used
         QBarSet *set0 = new QBarSet("Altuve");
