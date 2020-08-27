@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -25,11 +27,11 @@ void MainWindow::graphData() {
     QBarSet *set4 = new QBarSet("Trout");
 
     // Assign values for each bar
-    *set0 << 283 << 341 << 313 << 338 << 346 << 335;
-    *set1 << 250 << 315 << 282 << 307 << 303 << 330;
-    *set2 << 294 << 246 << 257 << 319 << 300 << 325;
-    *set3 << 248 << 244 << 265 << 281 << 278 << 313;
-    *set4 << 323 << 287 << 299 << 315 << 306 << 313;
+    *set0 << 283;
+    *set1 << 250;
+    *set2 << 294;
+    *set3 << 248;
+    *set4 << 323;
 
     // Add all sets of data to the chart as a whole
     // 1. Bar Chart
@@ -59,7 +61,7 @@ void MainWindow::graphData() {
 
     // Holds the category titles
     QStringList categories;
-    categories << "2013" << "2014" << "2015" << "2016" << "2017" << "2018";
+    categories << "2013" << "2014" << "2015" << "2016" << "2017";
 
     // Adds categories to the axes
     QBarCategoryAxis *axis = new QBarCategoryAxis();
@@ -80,10 +82,25 @@ void MainWindow::graphData() {
     // create graph and assign data to it:
     ui->graphicsView->setChart(chart);
 
-
 }
 
 
+void MainWindow::on_uni_button_toggled(bool checked)
+{
+    if(checked)
+        qDebug() << "Uniform selected";
+}
 
+void MainWindow::on_norm_button_toggled(bool checked)
+{
+    if(checked)
+        qDebug() << "Normal selected";
 
+}
 
+void MainWindow::on_other_button_toggled(bool checked)
+{
+    if(checked)
+        qDebug() << "Other selected";
+
+}

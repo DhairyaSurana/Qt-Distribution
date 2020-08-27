@@ -17,6 +17,14 @@ public:
 
 private slots:
     void graphData();
+    QVector<qreal>* createData(int num, QString theType);
+
+
+    void on_uni_button_toggled(bool checked);
+
+    void on_norm_button_toggled(bool checked);
+
+    void on_other_button_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;
