@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <random>
+#include <algorithm>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,52 +22,76 @@ MainWindow::~MainWindow()
 
 void MainWindow::graphData(QVector<qreal> data) {
 
-    QHash<int, int> freq;
+    //std::sort(data.begin(), data.end());
+    //qDebug() << data[0] << data[1] << data[2] << data[3];
+    QVector<qreal>::iterator min = std::min_element(data.begin(), data.end());
+    QVector<qreal>::iterator max = std::max_element(data.begin(), data.end());
+
+    //qDebug() << "min: " << *min;
+    //qDebug() << "max: " << *max;
+
+    qreal range = *max - *min;
+    //qDebug() << "range: " << range;
+    qreal bin_length = range / 20;
+    //qDebug() << "bin length: " << bin_length;
+
+    QVector<qreal> categories_num;
+    QStringList categories;
+
+    for(qreal i = *min+bin_length; i <= *max; i+=bin_length) {
+
+        categories << QString::number(i);
+        categories_num.append(i);
+    }
+
+
+
+    QMap<float, int> freq;
 
     for(int i = 0; i < data.size(); i++) {
 
-        if (freq.contains(data[i])) {
-            freq[data[i]] += 1;
-        }
+        for(int c = 0; c < categories_num.size()-1; c++) {
 
-        else {
-            freq[data[i]] = 1;
+            qreal lower_bound = categories_num[c];
+            qreal upper_bound = categories_num[c+1];
+
+            if(lower_bound <= data[i] && data[i] < upper_bound) {
+
+                if (freq.contains(lower_bound))
+                     freq[lower_bound] += 1;
+
+                else
+                    freq[lower_bound] = 1;
+
+                break;
+            }
         }
     }
 
-    //QVector<QBarSet> *sets = new QVector<QBarSet>;
     QBarSeries *series = new QBarSeries();
-    QStringList categories;
 
+    for(auto e : freq.keys()) {
 
+        QBarSet *set = new QBarSet(QString::number(e));
+        *set << freq[e];
 
-    QHash<int, int>::iterator i;
-    for(i = freq.begin(); i != freq.end(); i++) {
-        qDebug() << i.key() << ": " << i.value();
-        //sets->append(new QBarSet(QString::number(i.key())));
-        QBarSet *set = new QBarSet(QString::number(i.key()));
-
-        *set << i.value();
         series->append(set);
 
-        categories << QString::number(i.key());
     }
 
-
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    axisX->setLabelsAngle(-90);
 
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Sample Data Distribution");
-
-    QBarCategoryAxis *axis = new QBarCategoryAxis();
-    axis->append(categories);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
     chart->createDefaultAxes();
-
-    chart->addAxis(axis, Qt::AlignBottom);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->legend()->setAlignment(Qt::AlignBottom);
 
     ui->graphicsView->setChart(chart);
-
-
 
 
 
