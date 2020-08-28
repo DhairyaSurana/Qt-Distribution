@@ -17,7 +17,7 @@ public:
 
 private slots:
 
-    void graphData(QVector<qreal> *data);
+    void graphData(QVector<qreal> data);
 
     QVector<qreal>* createData(int num, QString theType);
 
