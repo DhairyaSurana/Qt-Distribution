@@ -16,14 +16,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void graphData();
+
+    void graphData(QVector<qreal> *data);
+
     QVector<qreal>* createData(int num, QString theType);
 
-
     void on_uni_button_toggled(bool checked);
-
     void on_norm_button_toggled(bool checked);
-
     void on_other_button_toggled(bool checked);
 
 private:

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <random>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    graphData();
+    //graphData();
 }
 
 MainWindow::~MainWindow()
@@ -17,7 +18,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::graphData() {
+void MainWindow::graphData(QVector<qreal> *data) {
 
     // Assign names to the set of bars used
     QBarSet *set0 = new QBarSet("Altuve");
@@ -87,20 +88,62 @@ void MainWindow::graphData() {
 
 void MainWindow::on_uni_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
         qDebug() << "Uniform selected";
+        QVector<qreal> *data = createData(20, "unif");
+
+    }
 }
 
 void MainWindow::on_norm_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
         qDebug() << "Normal selected";
+        QVector<qreal> *data = createData(10000, "norm");
+    }
 
 }
 
 void MainWindow::on_other_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
         qDebug() << "Other selected";
+        QVector<qreal> *data = createData(10000, "other");
 
+    }
+
+}
+
+
+// Function to fill a QVector with samples from a specified distribution
+// must #include <random> to use this function
+//
+QVector<qreal>* MainWindow::createData(int num, QString theType){
+
+    QVector<qreal> *dat = new QVector<qreal>;
+
+    std::default_random_engine generator;
+    // the distribution type is determined by string input
+    if (theType.contains("unif"))
+    {
+        std::uniform_real_distribution<double> distribution(0, 99.9999);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    else if (theType.contains("oth"))
+    {
+        std::gamma_distribution<double> distribution(5.0, 2.5);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    else // default behavior is the normal distribution
+    {
+        std::normal_distribution<double> distribution(10.0, 2.0);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    return dat;
 }
