@@ -47,6 +47,9 @@ void MainWindow::graphData(QVector<qreal> data) {
 
 
     QMap<float, int> freq;
+    for(int c = 0; c < categories_num.size(); c++) {
+        freq[categories_num[c]] = 0;
+    }
 
     for(int i = 0; i < data.size(); i++) {
 
@@ -55,40 +58,37 @@ void MainWindow::graphData(QVector<qreal> data) {
             qreal lower_bound = categories_num[c];
             qreal upper_bound = categories_num[c+1];
 
-            if(lower_bound <= data[i] && data[i] < upper_bound) {
+            if(lower_bound <= data[i] && data[i] <= upper_bound) {
 
-                if (freq.contains(lower_bound))
-                     freq[lower_bound] += 1;
-
-                else
-                    freq[lower_bound] = 1;
-
+                freq[upper_bound] += 1;
                 break;
             }
         }
     }
 
     QBarSeries *series = new QBarSeries();
+    QBarSet *set = new QBarSet("Data");
 
-    for(auto e : freq.keys()) {
-
-        QBarSet *set = new QBarSet(QString::number(e));
-        *set << freq[e];
-
-        series->append(set);
-
-    }
+    //qDebug() << "size: " << freq.values().size();
+    QList<int> freq_list = freq.values();
+    //qDebug() << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
+    *set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
+    series->append(set);
 
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     axisX->setLabelsAngle(-90);
 
+    QValueAxis *axisY = new QValueAxis();
+    QList<int>::iterator maxY = std::max_element(freq_list.begin(), freq_list.end());
+    axisY->setRange(0, *maxY);
+
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Sample Data Distribution");
     chart->setAnimationOptions(QChart::SeriesAnimations);
-    chart->createDefaultAxes();
     chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
     ui->graphicsView->setChart(chart);
