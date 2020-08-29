@@ -3,7 +3,6 @@
 
 #include <QDebug>
 #include <random>
-#include <algorithm>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -11,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Default code on startup
     QVector<qreal> data = *createData(10000, "norm");
     graphData(data);
 }
@@ -20,37 +20,36 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Creates a histogram in the graphicsView object (QChartView class)
 void MainWindow::graphData(QVector<qreal> data) {
 
-    //std::sort(data.begin(), data.end());
-    //qDebug() << data[0] << data[1] << data[2] << data[3];
+    // Get min and max of data
     QVector<qreal>::iterator min = std::min_element(data.begin(), data.end());
     QVector<qreal>::iterator max = std::max_element(data.begin(), data.end());
 
-    //qDebug() << "min: " << *min;
-    //qDebug() << "max: " << *max;
-
+    // Calculate range and bin length
     qreal range = *max - *min;
-    //qDebug() << "range: " << range;
     qreal bin_length = range / 20;
-    //qDebug() << "bin length: " << bin_length;
 
-    QVector<qreal> categories_num;
-    QStringList categories;
+    QVector<qreal> categories_num;  // Numeric representation of categories on x axis
+    QStringList categories; // String representation of categories on x axis
 
+    // Determine categories based on min, max, and bin length
     for(qreal i = *min+bin_length; i <= *max; i+=bin_length) {
 
         categories << QString::number(i);
         categories_num.append(i);
     }
 
-
-
+    // Used to store frequencies of each data point's occurrence within a category
     QMap<float, int> freq;
+
+    // Add categories to QMap and set frequenceis to 0
     for(int c = 0; c < categories_num.size(); c++) {
         freq[categories_num[c]] = 0;
     }
 
+    // Update QMap by traversing data
     for(int i = 0; i < data.size(); i++) {
 
         for(int c = 0; c < categories_num.size()-1; c++) {
@@ -58,6 +57,7 @@ void MainWindow::graphData(QVector<qreal> data) {
             qreal lower_bound = categories_num[c];
             qreal upper_bound = categories_num[c+1];
 
+            // Increment frequency of category if data fits within bounds
             if(lower_bound <= data[i] && data[i] <= upper_bound) {
 
                 freq[upper_bound] += 1;
@@ -69,101 +69,34 @@ void MainWindow::graphData(QVector<qreal> data) {
     QBarSeries *series = new QBarSeries();
     QBarSet *set = new QBarSet("Data");
 
-    //qDebug() << "size: " << freq.values().size();
+    // Construct set based on QMap values
     QList<int> freq_list = freq.values();
-    //qDebug() << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
     *set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
     series->append(set);
 
+    // Setup x axis
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
-    axisX->setLabelsAngle(-90);
+    axisX->setLabelsAngle(-90); // x axis labels are printed vertically
 
+    // Setup y axis
     QValueAxis *axisY = new QValueAxis();
     QList<int>::iterator maxY = std::max_element(freq_list.begin(), freq_list.end());
     axisY->setRange(0, *maxY);
 
+    // Setup chart
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Sample Data Distribution");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
+    chart->setAnimationOptions(QChart::SeriesAnimations);   // adds rising up animation of histogram bars
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
     ui->graphicsView->setChart(chart);
-
-
-
-
-
-
-    // Assign names to the set of bars used
-//    QBarSet *set0 = new QBarSet("Altuve");
-//    QBarSet *set1 = new QBarSet("Martinez");
-//    QBarSet *set2 = new QBarSet("Segura");
-//    QBarSet *set3 = new QBarSet("Simmons");
-//    QBarSet *set4 = new QBarSet("Trout");
-
-//    // Assign values for each bar
-//    *set0 << 283;
-//    *set1 << 250;
-//    *set2 << 294;
-//    *set3 << 248;
-//    *set4 << 323;
-
-//    // Add all sets of data to the chart as a whole
-//    // 1. Bar Chart
-//    QBarSeries *series = new QBarSeries();
-
-//    // 2. Stacked bar chart
-//    // QHorizontalStackedBarSeries *series = new QHorizontalStackedBarSeries();
-//    series->append(set0);
-//    series->append(set1);
-//    series->append(set2);
-//    series->append(set3);
-//    series->append(set4);
-
-//    // Used to define the bar chart to display, title
-//    // legend,
-//    QChart *chart = new QChart();
-
-//    // Add the chart
-//    chart->addSeries(series);
-
-//    // Set title
-//    chart->setTitle("Sample Data Distribution");
-
-//    // Define starting animation
-//    // NoAnimation, GridAxisAnimations, SeriesAnimations
-//    chart->setAnimationOptions(QChart::AllAnimations);
-
-//    // Holds the category titles
-//    QStringList categories;
-//    categories << "2013" << "2014" << "2015" << "2016" << "2017";
-
-//    // Adds categories to the axes
-//    QBarCategoryAxis *axis = new QBarCategoryAxis();
-//    axis->append(categories);
-//    chart->createDefaultAxes();
-
-//    // 1. Bar chart
-//    chart->addAxis(axis, Qt::AlignBottom);
-//    //chart->setAxisX(axis, series);
-
-//    // 2. Stacked Bar chart
-//    // chart->setAxisY(axis, series);
-
-//    // Define where the legend is displayed
-//    chart->legend()->setVisible(true);
-//    chart->legend()->setAlignment(Qt::AlignBottom);
-
-//    // create graph and assign data to it:
-//    ui->graphicsView->setChart(chart);
-
 }
 
-
+// Graphs a uniform distribution when "uniform" radio button is selected
 void MainWindow::on_uni_button_toggled(bool checked)
 {
     if(checked) {
@@ -175,6 +108,7 @@ void MainWindow::on_uni_button_toggled(bool checked)
     }
 }
 
+// Graphs a normal distribution when "normal" radio button is selected
 void MainWindow::on_norm_button_toggled(bool checked)
 {
     if(checked) {
@@ -188,6 +122,7 @@ void MainWindow::on_norm_button_toggled(bool checked)
 
 }
 
+// Graphs the other distribution when "other" radio button is selected
 void MainWindow::on_other_button_toggled(bool checked)
 {
     if(checked) {
@@ -204,7 +139,7 @@ void MainWindow::on_other_button_toggled(bool checked)
 
 // Function to fill a QVector with samples from a specified distribution
 // must #include <random> to use this function
-//
+// (This function is taken from the Professor's code given in the spec sheet)
 QVector<qreal>* MainWindow::createData(int num, QString theType){
 
     QVector<qreal> *dat = new QVector<qreal>;
