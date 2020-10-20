@@ -10,9 +10,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Default code on startup
-    QVector<qreal> data = *createData(10000, "norm");
-    graphData(data);
+    // Startup
+    bins = 20;
+
+    norm_data = *createData(10000, "norm");
+    unif_data = *createData(10000, "unif");
+    other_data = *createData(10000, "other");
+
+    graphData(norm_data, bins);
 }
 
 MainWindow::~MainWindow()
@@ -21,7 +26,9 @@ MainWindow::~MainWindow()
 }
 
 // Creates a histogram in the graphicsView object (QChartView class)
-void MainWindow::graphData(QVector<qreal> data) {
+void MainWindow::graphData(QVector<qreal> data, int bin_num) {
+
+    qDebug() << "bins: " << bins;
 
     // Get min and max of data
     QVector<qreal>::iterator min = std::min_element(data.begin(), data.end());
@@ -29,7 +36,7 @@ void MainWindow::graphData(QVector<qreal> data) {
 
     // Calculate range and bin length
     qreal range = *max - *min;
-    qreal bin_length = range / 20;
+    qreal bin_length = range / bin_num;
 
     QVector<qreal> categories_num;  // Numeric representation of categories on x axis
     QStringList categories; // String representation of categories on x axis
@@ -101,9 +108,9 @@ void MainWindow::on_uni_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Uniform selected";
-        QVector<qreal> data = *createData(10000, "unif");
+        //QVector<qreal> data = *createData(10000, "unif");
 
-        graphData(data);
+        graphData(unif_data, bins);
 
     }
 }
@@ -113,9 +120,9 @@ void MainWindow::on_norm_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Normal selected";
-        QVector<qreal> data = *createData(10000, "norm");
+        //QVector<qreal> data = *createData(10000, "norm");
 
-        graphData(data);
+        graphData(norm_data, bins);
 
 
     }
@@ -127,9 +134,10 @@ void MainWindow::on_other_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Other selected";
-        QVector<qreal> data = *createData(10000, "other");
+        //QVector<qreal> data = *createData(10000, "other");
 
-        graphData(data);
+        graphData(other_data, bins);
+
 
 
     }
@@ -168,4 +176,11 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
             dat->push_front(distribution(generator));
     }
     return dat;
+}
+
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
+{
+    bins = position;
+    ui->bin_num->setText(QString::number(bins));
+
 }

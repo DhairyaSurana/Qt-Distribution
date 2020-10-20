@@ -17,7 +17,7 @@ public:
 
 private slots:
 
-    void graphData(QVector<qreal> data);
+    void graphData(QVector<qreal> data, int bin_num);
 
     QVector<qreal>* createData(int num, QString theType);
 
@@ -25,7 +25,15 @@ private slots:
     void on_norm_button_toggled(bool checked);
     void on_other_button_toggled(bool checked);
 
+    void on_horizontalSlider_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
+
+    QVector<qreal> norm_data;
+    QVector<qreal> unif_data;
+    QVector<qreal> other_data;
+
+    int bins;
 };
 #endif // MAINWINDOW_H
