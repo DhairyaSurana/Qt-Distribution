@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
-    <height>618</height>
+    <width>910</width>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>30</y>
+      <y>100</y>
       <width>411</width>
-      <height>61</height>
+      <height>41</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -62,11 +62,35 @@
    <widget class="QChartView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>100</y>
+      <x>30</x>
+      <y>160</y>
       <width>851</width>
       <height>461</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="title">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>30</y>
+      <width>281</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>ECE4574 FA20 HW3</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>
@@ -75,7 +99,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>892</width>
+     <width>910</width>
      <height>26</height>
     </rect>
    </property>
