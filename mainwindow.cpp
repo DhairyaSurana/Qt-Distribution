@@ -77,8 +77,12 @@ void MainWindow::graphData(QVector<qreal> data, int bin_num) {
     QBarSet *set = new QBarSet("Data");
 
     // Construct set based on QMap values
+    qDebug() << "Length: " << freq.values().length();
     QList<int> freq_list = freq.values();
-    *set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
+
+    for(int i = 0; i < freq_list.length(); i++)
+        *set << freq_list[i];
+    //*set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
     series->append(set);
 
     // Setup x axis
