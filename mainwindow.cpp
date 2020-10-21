@@ -44,14 +44,14 @@ void MainWindow::graphData(QVector<qreal> data, int bin_num) {
     // Determine categories based on min, max, and bin length
     for(qreal i = *min+bin_length; i <= *max; i+=bin_length) {
 
-        categories << QString::number(i);
+        categories << QString::number(i, 'g', 3) + " to " + QString::number(i+bin_length, 'g', 3);
         categories_num.append(i);
     }
 
     // Used to store frequencies of each data point's occurrence within a category
     QMap<float, int> freq;
 
-    // Add categories to QMap and set frequenceis to 0
+    // Add categories to QMap and set frequencies to 0
     for(int c = 0; c < categories_num.size(); c++) {
         freq[categories_num[c]] = 0;
     }
@@ -80,8 +80,10 @@ void MainWindow::graphData(QVector<qreal> data, int bin_num) {
     qDebug() << "Length: " << freq.values().length();
     QList<int> freq_list = freq.values();
 
-    for(int i = 0; i < freq_list.length(); i++)
+    for(int i = 0; i < freq_list.length(); i++) {
+       // QString s = QString::number(freq_list[i]) + " to " + QString::number(freq_list[i+1]);
         *set << freq_list[i];
+     }
     //*set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
     series->append(set);
 
@@ -185,6 +187,6 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     bins = position;
-    ui->bin_num->setText(QString::number(bins));
+    ui->bin_num->setText("NBINS = " + QString::number(bins));
 
 }
