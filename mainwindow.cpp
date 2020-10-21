@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     unif_data = *createData(10000, "unif");
     other_data = *createData(10000, "other");
 
-    graphData(norm_data, bins);
+    graphData(norm_data);
 }
 
 MainWindow::~MainWindow()
@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 }
 
 // Creates a histogram in the graphicsView object (QChartView class)
-void MainWindow::graphData(QVector<qreal> data, int bin_num) {
+void MainWindow::graphData(QVector<qreal> data) {
 
     qDebug() << "bins: " << bins;
 
@@ -36,7 +36,7 @@ void MainWindow::graphData(QVector<qreal> data, int bin_num) {
 
     // Calculate range and bin length
     qreal range = *max - *min;
-    qreal bin_length = range / bin_num;
+    qreal bin_length = range / bins;
 
     QVector<qreal> categories_num;  // Numeric representation of categories on x axis
     QStringList categories; // String representation of categories on x axis
@@ -116,7 +116,7 @@ void MainWindow::on_uni_button_toggled(bool checked)
         qDebug() << "Uniform selected";
         //QVector<qreal> data = *createData(10000, "unif");
 
-        graphData(unif_data, bins);
+        graphData(unif_data);
 
     }
 }
@@ -128,7 +128,7 @@ void MainWindow::on_norm_button_toggled(bool checked)
         qDebug() << "Normal selected";
         //QVector<qreal> data = *createData(10000, "norm");
 
-        graphData(norm_data, bins);
+        graphData(norm_data);
 
 
     }
@@ -142,7 +142,7 @@ void MainWindow::on_other_button_toggled(bool checked)
         qDebug() << "Other selected";
         //QVector<qreal> data = *createData(10000, "other");
 
-        graphData(other_data, bins);
+        graphData(other_data);
 
 
 
@@ -184,9 +184,8 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
     return dat;
 }
 
-void MainWindow::on_horizontalSlider_sliderMoved(int position)
+void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    bins = position;
+    bins = value;
     ui->bin_num->setText("NBINS = " + QString::number(bins));
-
 }
