@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtCharts/QLineSeries>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,6 +29,8 @@ private slots:
 
     void on_horizontalSlider_valueChanged(int value);
 
+    void on_checkBox_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 
@@ -35,5 +39,8 @@ private:
     QVector<qreal> other_data;
 
     int bins;
+    bool show_cumulative;
+
+    QtCharts::QLineSeries *line_series;
 };
 #endif // MAINWINDOW_H

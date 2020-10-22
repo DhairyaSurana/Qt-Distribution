@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Startup
     bins = 20;
+    show_cumulative = false;
 
     norm_data = *createData(10000, "norm");
     unif_data = *createData(10000, "unif");
@@ -73,19 +74,22 @@ void MainWindow::graphData(QVector<qreal> data) {
         }
     }
 
-    QBarSeries *series = new QBarSeries();
-    QBarSet *set = new QBarSet("Data");
+    QBarSeries *bar_series = new QBarSeries();
+    QBarSet *bar_set = new QBarSet("Data");
+
+    line_series = new QLineSeries();    //Setting private variable
 
     // Construct set based on QMap values
     qDebug() << "Length: " << freq.values().length();
     QList<int> freq_list = freq.values();
-
+    double s = 0;
     for(int i = 0; i < freq_list.length(); i++) {
-       // QString s = QString::number(freq_list[i]) + " to " + QString::number(freq_list[i+1]);
-        *set << freq_list[i];
-     }
-    //*set << freq_list[0] << freq_list[1] << freq_list[2] << freq_list[3] << freq_list[4] << freq_list[5] << freq_list[6] << freq_list[7] << freq_list[8] << freq_list[9] << freq_list[10] << freq_list[11] << freq_list[12] << freq_list[13] << freq_list[14] << freq_list[15] << freq_list[16] << freq_list[17] << freq_list[18] << freq_list[19];
-    series->append(set);
+        *bar_set << freq_list[i];
+        s += freq_list[i];
+        *line_series << QPointF(categories_num[i], s);
+    }
+
+    bar_series->append(bar_set);
 
     // Setup x axis
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
@@ -99,7 +103,12 @@ void MainWindow::graphData(QVector<qreal> data) {
 
     // Setup chart
     QChart *chart = new QChart();
-    chart->addSeries(series);
+    chart->addSeries(bar_series);
+    chart->addSeries(line_series);
+
+    line_series->setVisible(show_cumulative);
+
+
     chart->setTitle("Sample Data Distribution");
     chart->setAnimationOptions(QChart::SeriesAnimations);   // adds rising up animation of histogram bars
     chart->addAxis(axisX, Qt::AlignBottom);
@@ -114,10 +123,7 @@ void MainWindow::on_uni_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Uniform selected";
-        //QVector<qreal> data = *createData(10000, "unif");
-
         graphData(unif_data);
-
     }
 }
 
@@ -126,26 +132,17 @@ void MainWindow::on_norm_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Normal selected";
-        //QVector<qreal> data = *createData(10000, "norm");
-
         graphData(norm_data);
-
-
     }
 
 }
 
-// Graphs the other distribution when "other" radio button is selected
+// Graphs the gamma distribution when "other" radio button is selected
 void MainWindow::on_other_button_toggled(bool checked)
 {
     if(checked) {
         qDebug() << "Other selected";
-        //QVector<qreal> data = *createData(10000, "other");
-
         graphData(other_data);
-
-
-
     }
 
 }
@@ -184,8 +181,16 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
     return dat;
 }
 
+// Updates the number of bins
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     bins = value;
     ui->bin_num->setText("NBINS = " + QString::number(bins));
+}
+
+// Graphs a cumulative histogram when "cumulative" checkbox is toggled
+void MainWindow::on_checkBox_toggled(bool checked)
+{
+     show_cumulative = checked;
+     line_series->setVisible(show_cumulative);
 }

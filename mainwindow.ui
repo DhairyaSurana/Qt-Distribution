@@ -17,9 +17,9 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>100</y>
-      <width>411</width>
+      <x>500</x>
+      <y>110</y>
+      <width>341</width>
       <height>41</height>
      </rect>
     </property>
@@ -27,17 +27,7 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
-     <item alignment="Qt::AlignLeft">
-      <widget class="QRadioButton" name="uni_button">
-       <property name="text">
-        <string>uniform</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item alignment="Qt::AlignHCenter">
+     <item>
       <widget class="QRadioButton" name="norm_button">
        <property name="enabled">
         <bool>true</bool>
@@ -50,10 +40,20 @@
        </property>
       </widget>
      </item>
-     <item alignment="Qt::AlignRight">
+     <item>
+      <widget class="QRadioButton" name="uni_button">
+       <property name="text">
+        <string>uniform</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QRadioButton" name="other_button">
        <property name="text">
-        <string>other</string>
+        <string>gamma</string>
        </property>
       </widget>
      </item>
@@ -98,7 +98,7 @@
      <rect>
       <x>130</x>
       <y>110</y>
-      <width>241</width>
+      <width>181</width>
       <height>31</height>
      </rect>
     </property>
@@ -135,6 +135,19 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>120</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cumulative</string>
     </property>
    </widget>
   </widget>
