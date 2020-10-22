@@ -32,6 +32,8 @@ private slots:
 
     void on_checkBox_toggled(bool checked);
 
+    void on_file_button_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 
