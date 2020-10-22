@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtCharts/QLineSeries>
+#include <QValueAxis>
 
 
 QT_BEGIN_NAMESPACE
@@ -42,5 +43,6 @@ private:
     bool show_cumulative;
 
     QtCharts::QLineSeries *line_series;
+    QtCharts::QValueAxis *axisY_right;
 };
 #endif // MAINWINDOW_H

@@ -96,10 +96,13 @@ void MainWindow::graphData(QVector<qreal> data) {
     axisX->append(categories);
     axisX->setLabelsAngle(-90); // x axis labels are printed vertically
 
-    // Setup y axis
-    QValueAxis *axisY = new QValueAxis();
+    // Setup y axis (left)
+    QValueAxis *axisY_left = new QValueAxis();
     QList<int>::iterator maxY = std::max_element(freq_list.begin(), freq_list.end());
-    axisY->setRange(0, *maxY);
+    axisY_left->setRange(0, *maxY);
+
+    axisY_right = new QValueAxis();
+    axisY_right->setRange(0, s);
 
     // Setup chart
     QChart *chart = new QChart();
@@ -112,7 +115,11 @@ void MainWindow::graphData(QVector<qreal> data) {
     chart->setTitle("Sample Data Distribution");
     chart->setAnimationOptions(QChart::SeriesAnimations);   // adds rising up animation of histogram bars
     chart->addAxis(axisX, Qt::AlignBottom);
-    chart->addAxis(axisY, Qt::AlignLeft);
+    chart->addAxis(axisY_left, Qt::AlignLeft);
+    chart->addAxis(axisY_right, Qt::AlignRight);
+
+    axisY_right->setVisible(show_cumulative);
+
     chart->legend()->setAlignment(Qt::AlignBottom);
 
     ui->graphicsView->setChart(chart);
@@ -193,4 +200,5 @@ void MainWindow::on_checkBox_toggled(bool checked)
 {
      show_cumulative = checked;
      line_series->setVisible(show_cumulative);
+     axisY_right->setVisible(show_cumulative);
 }
