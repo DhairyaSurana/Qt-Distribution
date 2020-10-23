@@ -203,26 +203,45 @@ void MainWindow::on_checkBox_toggled(bool checked)
      axisY_right->setVisible(show_cumulative);
 }
 
+QVector<qreal> getFileData() {
+
+    // NOTE: the file must be manually added to the same directory as executable
+    QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << file.errorString();
+    }
+
+    QVector<qreal> file_data;
+    file.readLine(); // Ignores "Weight" category name
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        file_data.append(line.split(',')[2].simplified().toDouble());
+    }
+
+    return file_data;
+
+}
+
 // Graphs the weight distribution of csv file when "data file" button is toggled
 void MainWindow::on_file_button_toggled(bool checked)
 {
     if(checked) {
 
-        qDebug() << QCoreApplication::applicationDirPath();
+       QVector<qreal> data;
+       QThread *inpThread = new QThread;
 
-       // NOTE: the file must be manually added to the same directory as executable
-       QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
-       if (!file.open(QIODevice::ReadOnly)) {
-           qDebug() << file.errorString();
-       }
 
-       QVector<qreal> file_data;
-       file.readLine(); // Ignores "Weight" category name
-       while (!file.atEnd()) {
-           QByteArray line = file.readLine();
-           file_data.append(line.split(',')[2].simplified().toDouble());
-       }
+       qDebug() << "InpThread: " << inpThread->isRunning();
+       inpThread->start();
 
-       graphData(file_data);
+       data = getFileData();
+
+       qDebug() << "InpThread: " << inpThread->isRunning();
+
+       inpThread->terminate();
+
+       qDebug() << "InpThread: " << inpThread->isRunning();
+
+       graphData(data);
     }
 }
