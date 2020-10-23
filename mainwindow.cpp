@@ -73,9 +73,10 @@ void MainWindow::graphData(QVector<qreal> data) {
     }
 
     QBarSeries *bar_series = new QBarSeries();
-    QBarSet *bar_set = new QBarSet("Data");
+    QBarSet *bar_set = new QBarSet("Distribution");
 
     line_series = new QLineSeries();    //Setting private variable
+    line_series->setName("Cumulative");
 
     // Construct set based on QMap values
     QList<int> freq_list = freq.values();
