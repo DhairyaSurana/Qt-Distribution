@@ -29,8 +29,6 @@ MainWindow::~MainWindow()
 // Creates a histogram in the graphicsView object (QChartView class)
 void MainWindow::graphData(QVector<qreal> data) {
 
-    qDebug() << "bins: " << bins;
-
     // Get min and max of data
     QVector<qreal>::iterator min = std::min_element(data.begin(), data.end());
     QVector<qreal>::iterator max = std::max_element(data.begin(), data.end());
@@ -80,78 +78,104 @@ void MainWindow::graphData(QVector<qreal> data) {
     line_series = new QLineSeries();    //Setting private variable
 
     // Construct set based on QMap values
-    qDebug() << "Length: " << freq.values().length();
     QList<int> freq_list = freq.values();
-    double s = 0;
+    double sum = 0;
     for(int i = 0; i < freq_list.length(); i++) {
         *bar_set << freq_list[i];
-        s += freq_list[i];
-        *line_series << QPointF(categories_num[i], s);
+        sum += freq_list[i];
+        *line_series << QPointF(categories_num[i], sum);
     }
 
     bar_series->append(bar_set);
+
+    QChart *chart = new QChart();
+
+    // Add Series
+    chart->addSeries(bar_series);
+    chart->addSeries(line_series);
+    line_series->setVisible(show_cumulative);
 
     // Setup x axis
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     axisX->setLabelsAngle(-90); // x axis labels are printed vertically
+    chart->addAxis(axisX, Qt::AlignBottom);
 
     // Setup y axis (left)
     QValueAxis *axisY_left = new QValueAxis();
     QList<int>::iterator maxY = std::max_element(freq_list.begin(), freq_list.end());
     axisY_left->setRange(0, *maxY);
+    chart->addAxis(axisY_left, Qt::AlignLeft);
 
+    // Setup y axis (right)
     axisY_right = new QValueAxis();
-    axisY_right->setRange(0, s);
-
-    // Setup chart
-    QChart *chart = new QChart();
-    chart->addSeries(bar_series);
-    chart->addSeries(line_series);
-
-    line_series->setVisible(show_cumulative);
+    axisY_right->setRange(0, sum);
+    axisY_right->setVisible(show_cumulative);
+    chart->addAxis(axisY_right, Qt::AlignRight);
 
 
     chart->setTitle("Sample Data Distribution");
-    chart->setAnimationOptions(QChart::SeriesAnimations);   // adds rising up animation of histogram bars
-    chart->addAxis(axisX, Qt::AlignBottom);
-    chart->addAxis(axisY_left, Qt::AlignLeft);
-    chart->addAxis(axisY_right, Qt::AlignRight);
-
-    axisY_right->setVisible(show_cumulative);
-
+    chart->setAnimationOptions(QChart::SeriesAnimations);   // adds rising up animation of histogram bar
     chart->legend()->setAlignment(Qt::AlignBottom);
 
     ui->graphicsView->setChart(chart);
 }
 
+QVector<qreal> getFileData() {
+
+    // NOTE: the file must be manually added to the same directory as executable
+    QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << file.errorString();
+    }
+
+    QVector<qreal> file_data;
+    file.readLine(); // Ignores "Weight" category name
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        file_data.append(line.split(',')[2].simplified().toDouble());
+    }
+
+    return file_data;
+
+}
+
 // Graphs a uniform distribution when "uniform" radio button is selected
 void MainWindow::on_uni_button_toggled(bool checked)
 {
-    if(checked) {
-        qDebug() << "Uniform selected";
+    if(checked)
         graphData(unif_data);
-    }
 }
 
 // Graphs a normal distribution when "normal" radio button is selected
 void MainWindow::on_norm_button_toggled(bool checked)
 {
-    if(checked) {
-        qDebug() << "Normal selected";
+    if(checked)
         graphData(norm_data);
-    }
-
 }
 
 // Graphs the gamma distribution when "other" radio button is selected
 void MainWindow::on_other_button_toggled(bool checked)
 {
-    if(checked) {
-        qDebug() << "Other selected";
+    if(checked)
         graphData(other_data);
-    }
+}
 
+// Graphs the weight distribution of csv file when "data file" button is toggled
+void MainWindow::on_file_button_toggled(bool checked)
+{
+    if(checked) {
+
+       QVector<qreal> data;
+       QThread *inpThread = new QThread;
+
+       inpThread->start();
+       data = getFileData();
+       inpThread->terminate();
+
+
+       graphData(data);
+    }
 }
 
 
@@ -201,47 +225,4 @@ void MainWindow::on_checkBox_toggled(bool checked)
      show_cumulative = checked;
      line_series->setVisible(show_cumulative);
      axisY_right->setVisible(show_cumulative);
-}
-
-QVector<qreal> getFileData() {
-
-    // NOTE: the file must be manually added to the same directory as executable
-    QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << file.errorString();
-    }
-
-    QVector<qreal> file_data;
-    file.readLine(); // Ignores "Weight" category name
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        file_data.append(line.split(',')[2].simplified().toDouble());
-    }
-
-    return file_data;
-
-}
-
-// Graphs the weight distribution of csv file when "data file" button is toggled
-void MainWindow::on_file_button_toggled(bool checked)
-{
-    if(checked) {
-
-       QVector<qreal> data;
-       QThread *inpThread = new QThread;
-
-
-       qDebug() << "InpThread: " << inpThread->isRunning();
-       inpThread->start();
-
-       data = getFileData();
-
-       qDebug() << "InpThread: " << inpThread->isRunning();
-
-       inpThread->terminate();
-
-       qDebug() << "InpThread: " << inpThread->isRunning();
-
-       graphData(data);
-    }
 }
