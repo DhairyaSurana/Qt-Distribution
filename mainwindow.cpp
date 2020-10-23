@@ -123,13 +123,19 @@ void MainWindow::graphData(QVector<qreal> data) {
 
 QVector<qreal> getFileData() {
 
+    QVector<qreal> file_data;
+
     // NOTE: the file must be manually added to the same directory as executable
     QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
+
+    // Error handling
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << file.errorString();
+        file_data.append(-1);
+        return file_data;
     }
 
-    QVector<qreal> file_data;
+
     file.readLine(); // Ignores "Weight" category name
     while (!file.atEnd()) {
         QByteArray line = file.readLine();
@@ -161,20 +167,58 @@ void MainWindow::on_other_button_toggled(bool checked)
         graphData(other_data);
 }
 
+void displayError() {
+
+    QDialog *errBox = new QDialog();
+
+    QLabel *msg = new QLabel();
+    msg->setText("The system cannot find the file datasets_26073_33239_weight-height.csv");
+
+    QPushButton *ok_btn = new QPushButton();
+    ok_btn->setText("OK");
+    QObject::connect(ok_btn, &QPushButton::clicked, errBox, &QDialog::close);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(msg);
+    layout->addWidget(ok_btn);
+
+    errBox->setLayout(layout);
+    errBox->resize(400, 200);
+    errBox->setWindowTitle("File Not Found");
+    errBox->setVisible(true);
+
+
+
+}
+
 // Graphs the weight distribution of csv file when "data file" button is toggled
 void MainWindow::on_file_button_toggled(bool checked)
 {
     if(checked) {
 
-       QVector<qreal> data;
-       QThread *inpThread = new QThread;
+           QVector<qreal> data;
+           QThread *inpThread = new QThread;
 
-       inpThread->start();
-       data = getFileData();
-       inpThread->terminate();
+           inpThread->start();
+           data = getFileData();
+           inpThread->terminate();
+
+           if(data.length() > 1 && data[0] != -1)
+              graphData(data);
+
+           else {
+
+               displayError();
+
+               bins = 20;
+               show_cumulative = false;
+
+               ui->norm_button->toggle();
+               ui->horizontalSlider->setValue(bins);
+               ui->checkBox->setChecked(false);
+           }
 
 
-       graphData(data);
     }
 }
 
