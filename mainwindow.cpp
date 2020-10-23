@@ -173,7 +173,7 @@ void displayError() {
     QDialog *errBox = new QDialog();
 
     QLabel *msg = new QLabel();
-    msg->setText("The system cannot find the file datasets_26073_33239_weight-height.csv");
+    msg->setText("File not found: datasets_26073_33239_weight-height.csv");
 
     QPushButton *ok_btn = new QPushButton();
     ok_btn->setText("OK");
