@@ -273,6 +273,19 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     bins = value;
     ui->bin_num->setText("NBINS = " + QString::number(bins));
+}
+
+// Graphs a cumulative histogram when "cumulative" checkbox is toggled
+void MainWindow::on_checkBox_toggled(bool checked)
+{
+     show_cumulative = checked;
+     line_series->setVisible(show_cumulative);
+     axisY_right->setVisible(show_cumulative);
+}
+
+void MainWindow::on_horizontalSlider_sliderReleased()
+{
+    qDebug() << ui->horizontalSlider->value();
 
     if(dist_type == "unif") {
         on_uni_button_toggled(true);
@@ -289,14 +302,4 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
     else if(dist_type == "file") {
         on_file_button_toggled(true);
     }
-
-
-}
-
-// Graphs a cumulative histogram when "cumulative" checkbox is toggled
-void MainWindow::on_checkBox_toggled(bool checked)
-{
-     show_cumulative = checked;
-     line_series->setVisible(show_cumulative);
-     axisY_right->setVisible(show_cumulative);
 }

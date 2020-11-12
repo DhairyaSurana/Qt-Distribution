@@ -35,6 +35,8 @@ private slots:
 
     void on_file_button_toggled(bool checked);
 
+    void on_horizontalSlider_sliderReleased();
+
 private:
     Ui::MainWindow *ui;
 
