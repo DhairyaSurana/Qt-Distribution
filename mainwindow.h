@@ -10,6 +10,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -43,6 +44,7 @@ private:
 
     int bins;
     bool show_cumulative;
+    std::string dist_type;
 
     QtCharts::QLineSeries *line_series;
     QtCharts::QValueAxis *axisY_right;

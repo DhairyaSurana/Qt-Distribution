@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     unif_data = *createData(10000, "unif");
     other_data = *createData(10000, "other");
 
+    dist_type = "norm";
     graphData(norm_data);
 }
 
@@ -150,22 +151,28 @@ QVector<qreal> getFileData() {
 // Graphs a uniform distribution when "uniform" radio button is selected
 void MainWindow::on_uni_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
+        dist_type = "unif";
         graphData(unif_data);
+    }
 }
 
 // Graphs a normal distribution when "normal" radio button is selected
 void MainWindow::on_norm_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
+        dist_type = "norm";
         graphData(norm_data);
+    }
 }
 
 // Graphs the gamma distribution when "other" radio button is selected
 void MainWindow::on_other_button_toggled(bool checked)
 {
-    if(checked)
+    if(checked) {
+        dist_type = "gamma";
         graphData(other_data);
+    }
 }
 
 void displayError() {
@@ -204,6 +211,8 @@ void MainWindow::on_file_button_toggled(bool checked)
            data = getFileData();
            inpThread->terminate();
 
+           qDebug() << data.length();
+
            if(data.length() > 1 && data[0] != -1)
               graphData(data);
 
@@ -218,6 +227,8 @@ void MainWindow::on_file_button_toggled(bool checked)
                ui->horizontalSlider->setValue(bins);
                ui->checkBox->setChecked(false);
            }
+
+           dist_type = "file";
 
 
     }
@@ -262,6 +273,24 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     bins = value;
     ui->bin_num->setText("NBINS = " + QString::number(bins));
+
+    if(dist_type == "unif") {
+        on_uni_button_toggled(true);
+    }
+
+    else if(dist_type == "norm") {
+        on_norm_button_toggled(true);
+    }
+
+    else if(dist_type == "gamma") {
+        on_other_button_toggled(true);
+    }
+
+    else if(dist_type == "file") {
+        on_file_button_toggled(true);
+    }
+
+
 }
 
 // Graphs a cumulative histogram when "cumulative" checkbox is toggled
