@@ -44,7 +44,6 @@ private:
     QVector<qreal> unif_data;
     QVector<qreal> other_data;
 
-    int bins;
     bool show_cumulative;
     std::string dist_type;
 

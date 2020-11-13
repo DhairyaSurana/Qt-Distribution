@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Startup
-    bins = 20;
     show_cumulative = false;
 
     norm_data = *createData(10000, "norm");
@@ -36,7 +35,7 @@ void MainWindow::graphData(QVector<qreal> data) {
 
     // Calculate range and bin length
     qreal range = *max - *min;
-    qreal bin_length = range / bins;
+    qreal bin_length = range / ui->horizontalSlider->value();
 
     QVector<qreal> categories_num;  // Numeric representation of categories on x axis
     QStringList categories; // String representation of categories on x axis
@@ -211,8 +210,6 @@ void MainWindow::on_file_button_toggled(bool checked)
            data = getFileData();
            inpThread->terminate();
 
-           qDebug() << data.length();
-
            if(data.length() > 1 && data[0] != -1)
               graphData(data);
 
@@ -220,11 +217,10 @@ void MainWindow::on_file_button_toggled(bool checked)
 
                displayError();
 
-               bins = 20;
                show_cumulative = false;
 
                ui->norm_button->toggle();
-               ui->horizontalSlider->setValue(bins);
+               ui->horizontalSlider->setValue(20);
                ui->checkBox->setChecked(false);
            }
 
@@ -271,8 +267,7 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
 // Updates the number of bins
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    bins = value;
-    ui->bin_num->setText("NBINS = " + QString::number(bins));
+    ui->bin_num->setText("NBINS = " + QString::number(value));
 }
 
 // Graphs a cumulative histogram when "cumulative" checkbox is toggled
