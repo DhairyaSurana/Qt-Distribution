@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <random>
+#include <QNetworkReply>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,6 +19,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     dist_type = "norm";
     graphData(norm_data);
+
+    manager = new QNetworkAccessManager();
+    QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(managerFinished(QNetworkReply*)));
+//    QObject::connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
+//                     this, SLOT(authenticate(QNetworkReply*,QAuthenticator*)));
 }
 
 MainWindow::~MainWindow()
@@ -145,7 +152,14 @@ void MainWindow::on_norm_button_toggled(bool checked)
 void MainWindow::on_rt_button_toggled(bool checked)
 {
     if (checked) {
-        qDebug() << "real time data has been checked";
+
+        request.setUrl(QUrl("https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets"));
+
+        QString token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
+
+        request.setRawHeader("token", token.toUtf8());
+        manager->get(request);
+
     }
 }
 
@@ -214,3 +228,16 @@ void MainWindow::on_max_slider_valueChanged(int value)
 {
     ui->maxp_num->setText("MAXP = " + QString::number(value));
 }
+
+
+void MainWindow::managerFinished(QNetworkReply *reply) {
+
+       QString answer = reply->readAll();
+       qDebug() << answer;
+}
+
+//void MainWindow::authenticate(QNetworkReply* reply, QAuthenticator* auth) {
+
+//    QString token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
+//    reply->setRawHeader("Authorization", token.);
+//}

@@ -5,6 +5,9 @@
 #include <QtCharts/QLineSeries>
 #include <QValueAxis>
 
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,6 +41,10 @@ private slots:
 
     void on_max_slider_valueChanged(int value);
 
+    void managerFinished(QNetworkReply *reply);
+
+    //void authenticate(QNetworkReply* reply, QAuthenticator* auth);
+
 private:
     Ui::MainWindow *ui;
 
@@ -49,5 +56,8 @@ private:
 
     QtCharts::QLineSeries *line_series;
     QtCharts::QValueAxis *axisY_right;
+
+    QNetworkAccessManager *manager;
+    QNetworkRequest request;
 };
 #endif // MAINWINDOW_H
