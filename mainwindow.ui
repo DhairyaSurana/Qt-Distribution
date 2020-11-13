@@ -51,13 +51,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="other_button">
-       <property name="text">
-        <string>gamma</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QRadioButton" name="file_button">
        <property name="text">
         <string>file data</string>

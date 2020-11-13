@@ -27,7 +27,6 @@ private slots:
 
     void on_uni_button_toggled(bool checked);
     void on_norm_button_toggled(bool checked);
-    void on_other_button_toggled(bool checked);
 
     void on_horizontalSlider_valueChanged(int value);
 
@@ -42,7 +41,6 @@ private:
 
     QVector<qreal> norm_data;
     QVector<qreal> unif_data;
-    QVector<qreal> other_data;
 
     bool show_cumulative;
     std::string dist_type;

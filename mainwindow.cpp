@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     norm_data = *createData(10000, "norm");
     unif_data = *createData(10000, "unif");
-    other_data = *createData(10000, "other");
 
     dist_type = "norm";
     graphData(norm_data);
@@ -165,14 +164,6 @@ void MainWindow::on_norm_button_toggled(bool checked)
     }
 }
 
-// Graphs the gamma distribution when "other" radio button is selected
-void MainWindow::on_other_button_toggled(bool checked)
-{
-    if(checked) {
-        dist_type = "gamma";
-        graphData(other_data);
-    }
-}
 
 void displayError() {
 
@@ -288,10 +279,6 @@ void MainWindow::on_horizontalSlider_sliderReleased()
 
     else if(dist_type == "norm") {
         on_norm_button_toggled(true);
-    }
-
-    else if(dist_type == "gamma") {
-        on_other_button_toggled(true);
     }
 
     else if(dist_type == "file") {
