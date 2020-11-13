@@ -79,7 +79,7 @@
    <widget class="QLabel" name="title">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>530</x>
       <y>30</y>
       <width>281</width>
       <height>41</height>
@@ -91,7 +91,7 @@
      </font>
     </property>
     <property name="text">
-     <string>ECE4574 FA20 HW3</string>
+     <string>ECE4574 FA20 HW4</string>
     </property>
     <property name="textFormat">
      <enum>Qt::PlainText</enum>
