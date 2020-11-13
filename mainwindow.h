@@ -28,13 +28,15 @@ private slots:
     void on_uni_button_toggled(bool checked);
     void on_norm_button_toggled(bool checked);
 
-    void on_horizontalSlider_valueChanged(int value);
+    void on_bin_slider_valueChanged(int value);
+    void on_bin_slider_sliderReleased();
+
 
     void on_checkBox_toggled(bool checked);
 
     void on_file_button_toggled(bool checked);
 
-    void on_horizontalSlider_sliderReleased();
+    void on_max_slider_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

@@ -34,7 +34,7 @@ void MainWindow::graphData(QVector<qreal> data) {
 
     // Calculate range and bin length
     qreal range = *max - *min;
-    qreal bin_length = range / ui->horizontalSlider->value();
+    qreal bin_length = range / ui->bin_slider->value();
 
     QVector<qreal> categories_num;  // Numeric representation of categories on x axis
     QStringList categories; // String representation of categories on x axis
@@ -211,7 +211,7 @@ void MainWindow::on_file_button_toggled(bool checked)
                show_cumulative = false;
 
                ui->norm_button->toggle();
-               ui->horizontalSlider->setValue(20);
+               ui->bin_slider->setValue(20);
                ui->checkBox->setChecked(false);
            }
 
@@ -256,7 +256,7 @@ QVector<qreal>* MainWindow::createData(int num, QString theType){
 }
 
 // Updates the number of bins
-void MainWindow::on_horizontalSlider_valueChanged(int value)
+void MainWindow::on_bin_slider_valueChanged(int value)
 {
     ui->bin_num->setText("NBINS = " + QString::number(value));
 }
@@ -269,9 +269,9 @@ void MainWindow::on_checkBox_toggled(bool checked)
      axisY_right->setVisible(show_cumulative);
 }
 
-void MainWindow::on_horizontalSlider_sliderReleased()
+void MainWindow::on_bin_slider_sliderReleased()
 {
-    qDebug() << ui->horizontalSlider->value();
+    qDebug() << ui->bin_slider->value();
 
     if(dist_type == "unif") {
         on_uni_button_toggled(true);
@@ -284,4 +284,9 @@ void MainWindow::on_horizontalSlider_sliderReleased()
     else if(dist_type == "file") {
         on_file_button_toggled(true);
     }
+}
+
+void MainWindow::on_max_slider_valueChanged(int value)
+{
+    ui->maxp_num->setText("MAXP = " + QString::number(value));
 }
