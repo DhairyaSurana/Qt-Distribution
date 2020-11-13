@@ -51,9 +51,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="file_button">
+      <widget class="QRadioButton" name="rt_button">
        <property name="text">
-        <string>file data</string>
+        <string>real-time data</string>
        </property>
       </widget>
      </item>

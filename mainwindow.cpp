@@ -121,30 +121,6 @@ void MainWindow::graphData(QVector<qreal> data) {
     ui->graphicsView->setChart(chart);
 }
 
-QVector<qreal> getFileData() {
-
-    QVector<qreal> file_data;
-
-    // NOTE: the file must be manually added to the same directory as executable
-    QFile file(QCoreApplication::applicationDirPath() + "/datasets_26073_33239_weight-height.csv");
-
-    // Error handling
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << file.errorString();
-        file_data.append(-1);
-        return file_data;
-    }
-
-
-    file.readLine(); // Ignores "Weight" category name
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        file_data.append(line.split(',')[2].simplified().toDouble());
-    }
-
-    return file_data;
-
-}
 
 // Graphs a uniform distribution when "uniform" radio button is selected
 void MainWindow::on_uni_button_toggled(bool checked)
@@ -165,59 +141,11 @@ void MainWindow::on_norm_button_toggled(bool checked)
 }
 
 
-void displayError() {
-
-    QDialog *errBox = new QDialog();
-
-    QLabel *msg = new QLabel();
-    msg->setText("File not found: datasets_26073_33239_weight-height.csv");
-
-    QPushButton *ok_btn = new QPushButton();
-    ok_btn->setText("OK");
-    QObject::connect(ok_btn, &QPushButton::clicked, errBox, &QDialog::close);
-
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->addWidget(msg);
-    layout->addWidget(ok_btn);
-
-    errBox->setLayout(layout);
-    errBox->resize(400, 200);
-    errBox->setWindowTitle("File Not Found");
-    errBox->setVisible(true);
-
-
-
-}
-
 // Graphs the weight distribution of csv file when "data file" button is toggled
-void MainWindow::on_file_button_toggled(bool checked)
+void MainWindow::on_rt_button_toggled(bool checked)
 {
-    if(checked) {
-
-           QVector<qreal> data;
-           QThread *inpThread = new QThread;
-
-           inpThread->start();
-           data = getFileData();
-           inpThread->terminate();
-
-           if(data.length() > 1 && data[0] != -1)
-              graphData(data);
-
-           else {
-
-               displayError();
-
-               show_cumulative = false;
-
-               ui->norm_button->toggle();
-               ui->bin_slider->setValue(20);
-               ui->checkBox->setChecked(false);
-           }
-
-           dist_type = "file";
-
-
+    if (checked) {
+        qDebug() << "real time data has been checked";
     }
 }
 
@@ -279,10 +207,6 @@ void MainWindow::on_bin_slider_sliderReleased()
 
     else if(dist_type == "norm") {
         on_norm_button_toggled(true);
-    }
-
-    else if(dist_type == "file") {
-        on_file_button_toggled(true);
     }
 }
 
