@@ -153,7 +153,8 @@ void MainWindow::on_rt_button_toggled(bool checked)
 {
     if (checked) {
 
-        request.setUrl(QUrl("https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets"));
+        request.setUrl(QUrl("https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=PRECIP_15&stationid=COOP:010008&startdate=2012-01-01&enddate=2012-12-31"));
+
 
         QString token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
 
