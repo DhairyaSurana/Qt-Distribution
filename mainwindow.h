@@ -7,6 +7,7 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
+#include <QNetworkReply>
 
 
 QT_BEGIN_NAMESPACE
