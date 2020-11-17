@@ -92,6 +92,9 @@ void MainWindow::graphData(QVector<qreal> data) {
         *line_series << QPointF(categories_num[i], sum);
     }
 
+    if(dist_type == "real")
+        bar_set->setColor(Qt::green);
+
     bar_series->append(bar_set);
 
     QChart *chart = new QChart();
@@ -151,6 +154,8 @@ void MainWindow::on_norm_button_toggled(bool checked)
 void MainWindow::on_rt_button_toggled(bool checked)
 {
     if (checked) {
+
+        dist_type = "real";
 
         QString url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=PRECIP_15&stationid=COOP:010008&startdate=2012-01-01&enddate=2012-12-31&limit=" + QString::number(ui->max_slider->value());
         request.setUrl(QUrl(url));
@@ -223,6 +228,10 @@ void MainWindow::on_bin_slider_sliderReleased()
     else if(dist_type == "norm") {
         on_norm_button_toggled(true);
     }
+
+    else if(dist_type == "real") {
+        on_rt_button_toggled(true);
+    }
 }
 
 void MainWindow::on_max_slider_valueChanged(int value)
@@ -234,7 +243,20 @@ void MainWindow::on_max_slider_valueChanged(int value)
 void MainWindow::managerFinished(QNetworkReply *reply) {
 
        QString answer = reply->readAll();
-       qDebug() << answer;
+
+       QJsonDocument doc = QJsonDocument::fromJson(answer.toUtf8());
+
+       QVector<qreal> weather_data;
+       for(int i = 0; i < ui->max_slider->value(); i++) {
+           double value = doc["results"][i]["value"].toDouble();
+           if(value != 99999)
+              weather_data.append(value);
+       }
+
+       qDebug() << weather_data;
+
+       graphData(weather_data);
+
 }
 
 //void MainWindow::authenticate(QNetworkReply* reply, QAuthenticator* auth) {
