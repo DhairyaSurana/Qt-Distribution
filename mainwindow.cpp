@@ -136,6 +136,7 @@ void MainWindow::on_uni_button_toggled(bool checked)
 {
     if(checked) {
         dist_type = "unif";
+        ui->pt_label->setText("PtsRecv = ---");
         graphData(unif_data);
     }
 }
@@ -145,6 +146,7 @@ void MainWindow::on_norm_button_toggled(bool checked)
 {
     if(checked) {
         dist_type = "norm";
+        ui->pt_label->setText("PtsRecv = ---");
         graphData(norm_data);
     }
 }
@@ -251,6 +253,8 @@ void MainWindow::managerFinished(QNetworkReply *reply) {
            double value = doc["results"][i]["value"].toDouble();
            if(value != 99999)
               weather_data.append(value);
+
+           ui->pt_label->setText("PtsRecv = " + QString::number(weather_data.length()));
        }
 
        qDebug() << weather_data;
@@ -258,9 +262,3 @@ void MainWindow::managerFinished(QNetworkReply *reply) {
        graphData(weather_data);
 
 }
-
-//void MainWindow::authenticate(QNetworkReply* reply, QAuthenticator* auth) {
-
-//    QString token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
-//    reply->setRawHeader("Authorization", token.);
-//}
