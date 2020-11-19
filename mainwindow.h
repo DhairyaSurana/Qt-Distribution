@@ -46,6 +46,8 @@ private slots:
 
     //void authenticate(QNetworkReply* reply, QAuthenticator* auth);
 
+    void on_max_slider_sliderReleased();
+
 private:
     Ui::MainWindow *ui;
 

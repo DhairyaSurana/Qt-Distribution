@@ -262,3 +262,9 @@ void MainWindow::managerFinished(QNetworkReply *reply) {
        graphData(weather_data);
 
 }
+
+void MainWindow::on_max_slider_sliderReleased()
+{
+    if(dist_type == "real")
+         on_rt_button_toggled(true);
+}
