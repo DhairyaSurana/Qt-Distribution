@@ -159,6 +159,9 @@ void MainWindow::on_rt_button_toggled(bool checked)
 
         dist_type = "real";
 
+        QThread *restThread = new QThread;
+
+        restThread->start();
         QString url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=PRECIP_15&stationid=COOP:010008&startdate=2012-01-01&enddate=2012-12-31&limit=" + QString::number(ui->max_slider->value());
         request.setUrl(QUrl(url));
 
@@ -167,6 +170,8 @@ void MainWindow::on_rt_button_toggled(bool checked)
 
         request.setRawHeader("token", token.toUtf8());
         manager->get(request);
+
+        restThread->terminate();
 
     }
 }
