@@ -25,28 +25,26 @@ public:
 
 private slots:
 
+    // Histogram Functions
     void graphData(QVector<qreal> data);
+    QVector<qreal>* createData(int num, QString type);
+    void on_checkBox_toggled(bool checked);
 
-    QVector<qreal>* createData(int num, QString theType);
-
+    // Radio Button Functions
     void on_uni_button_toggled(bool checked);
     void on_norm_button_toggled(bool checked);
+    void on_rt_button_toggled(bool checked);
 
+    // Bin Slider Functions
     void on_bin_slider_valueChanged(int value);
     void on_bin_slider_sliderReleased();
 
-
-    void on_checkBox_toggled(bool checked);
-
-    void on_rt_button_toggled(bool checked);
-
+    // Max Slider + NOAA REST API Functions
     void on_max_slider_valueChanged(int value);
-
+    void on_max_slider_sliderReleased();
     void managerFinished(QNetworkReply *reply);
 
-    //void authenticate(QNetworkReply* reply, QAuthenticator* auth);
 
-    void on_max_slider_sliderReleased();
 
 private:
     Ui::MainWindow *ui;
@@ -62,5 +60,8 @@ private:
 
     QNetworkAccessManager *manager;
     QNetworkRequest request;
+
+    QString url;
+    QString token;
 };
 #endif // MAINWINDOW_H

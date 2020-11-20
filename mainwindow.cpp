@@ -16,19 +16,57 @@ MainWindow::MainWindow(QWidget *parent)
     norm_data = *createData(10000, "norm");
     unif_data = *createData(10000, "unif");
 
+    url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=PRECIP_15&stationid=COOP:010008&startdate=2012-01-01&enddate=2012-12-31&limit=";
+    token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
+
     dist_type = "norm";
     graphData(norm_data);
 
     manager = new QNetworkAccessManager();
     QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(managerFinished(QNetworkReply*)));
-//    QObject::connect(manager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)),
-//                     this, SLOT(authenticate(QNetworkReply*,QAuthenticator*)));
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+//=============================================================================================================
+// Histogram Functions
+
+// Function to fill a QVector with samples from a specified distribution
+// must #include <random> to use this function
+// (This function is taken from the Professor's code given in the spec sheet)
+QVector<qreal>* MainWindow::createData(int num, QString type){
+
+    QVector<qreal> *dat = new QVector<qreal>;
+
+    std::default_random_engine generator;
+    // the distribution type is determined by string input
+    if (type.contains("unif"))
+    {
+        std::uniform_real_distribution<double> distribution(0, 99.9999);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    else if (type.contains("oth"))
+    {
+        std::gamma_distribution<double> distribution(5.0, 2.5);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    else // default behavior is the normal distribution
+    {
+        std::normal_distribution<double> distribution(10.0, 2.0);
+        // params are arbitrarily chosen
+        for (int incr = 0; incr < num; incr++)
+            dat->push_front(distribution(generator));
+    }
+    return dat;
 }
 
 // Creates a histogram in the graphicsView object (QChartView class)
@@ -130,6 +168,16 @@ void MainWindow::graphData(QVector<qreal> data) {
     ui->graphicsView->setChart(chart);
 }
 
+// Graphs a cumulative histogram when "cumulative" checkbox is toggled
+void MainWindow::on_checkBox_toggled(bool checked)
+{
+     show_cumulative = checked;
+     line_series->setVisible(show_cumulative);
+     axisY_right->setVisible(show_cumulative);
+}
+
+//=============================================================================================================
+// Radio Button Functions
 
 // Graphs a uniform distribution when "uniform" radio button is selected
 void MainWindow::on_uni_button_toggled(bool checked)
@@ -151,8 +199,7 @@ void MainWindow::on_norm_button_toggled(bool checked)
     }
 }
 
-
-// Graphs the weight distribution of csv file when "data file" button is toggled
+// Graphs the weight distribution of csv file when "real" button is toggled
 void MainWindow::on_rt_button_toggled(bool checked)
 {
     if (checked) {
@@ -162,13 +209,10 @@ void MainWindow::on_rt_button_toggled(bool checked)
         QThread *restThread = new QThread;
 
         restThread->start();
-        QString url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=PRECIP_15&stationid=COOP:010008&startdate=2012-01-01&enddate=2012-12-31&limit=" + QString::number(ui->max_slider->value());
-        request.setUrl(QUrl(url));
 
-
-        QString token = "rcYPbXkSoYDZtGwvVGnixeGbRrjbJKsT";
-
+        request.setUrl(QUrl(url + QString::number(ui->max_slider->value())));
         request.setRawHeader("token", token.toUtf8());
+
         manager->get(request);
 
         restThread->terminate();
@@ -176,53 +220,8 @@ void MainWindow::on_rt_button_toggled(bool checked)
     }
 }
 
-
-// Function to fill a QVector with samples from a specified distribution
-// must #include <random> to use this function
-// (This function is taken from the Professor's code given in the spec sheet)
-QVector<qreal>* MainWindow::createData(int num, QString theType){
-
-    QVector<qreal> *dat = new QVector<qreal>;
-
-    std::default_random_engine generator;
-    // the distribution type is determined by string input
-    if (theType.contains("unif"))
-    {
-        std::uniform_real_distribution<double> distribution(0, 99.9999);
-        // params are arbitrarily chosen
-        for (int incr = 0; incr < num; incr++)
-            dat->push_front(distribution(generator));
-    }
-    else if (theType.contains("oth"))
-    {
-        std::gamma_distribution<double> distribution(5.0, 2.5);
-        // params are arbitrarily chosen
-        for (int incr = 0; incr < num; incr++)
-            dat->push_front(distribution(generator));
-    }
-    else // default behavior is the normal distribution
-    {
-        std::normal_distribution<double> distribution(10.0, 2.0);
-        // params are arbitrarily chosen
-        for (int incr = 0; incr < num; incr++)
-            dat->push_front(distribution(generator));
-    }
-    return dat;
-}
-
-// Updates the number of bins
-void MainWindow::on_bin_slider_valueChanged(int value)
-{
-    ui->bin_num->setText("NBINS = " + QString::number(value));
-}
-
-// Graphs a cumulative histogram when "cumulative" checkbox is toggled
-void MainWindow::on_checkBox_toggled(bool checked)
-{
-     show_cumulative = checked;
-     line_series->setVisible(show_cumulative);
-     axisY_right->setVisible(show_cumulative);
-}
+//=============================================================================================================
+// Bin Slider Functions
 
 void MainWindow::on_bin_slider_sliderReleased()
 {
@@ -241,11 +240,25 @@ void MainWindow::on_bin_slider_sliderReleased()
     }
 }
 
+// Updates the number of bins
+void MainWindow::on_bin_slider_valueChanged(int value)
+{
+    ui->bin_num->setText("NBINS = " + QString::number(value));
+}
+
+//=============================================================================================================
+// Max Slider + NOAA REST API Functions
+
+void MainWindow::on_max_slider_sliderReleased()
+{
+    if(dist_type == "real")
+         on_rt_button_toggled(true);
+}
+
 void MainWindow::on_max_slider_valueChanged(int value)
 {
     ui->maxp_num->setText("MAXP = " + QString::number(value));
 }
-
 
 void MainWindow::managerFinished(QNetworkReply *reply) {
 
@@ -256,20 +269,12 @@ void MainWindow::managerFinished(QNetworkReply *reply) {
        QVector<qreal> weather_data;
        for(int i = 0; i < ui->max_slider->value(); i++) {
            double value = doc["results"][i]["value"].toDouble();
+           //qDebug() << value;
            if(value != 99999)
               weather_data.append(value);
 
            ui->pt_label->setText("PtsRecv = " + QString::number(weather_data.length()));
        }
 
-       qDebug() << weather_data;
-
        graphData(weather_data);
-
-}
-
-void MainWindow::on_max_slider_sliderReleased()
-{
-    if(dist_type == "real")
-         on_rt_button_toggled(true);
 }
