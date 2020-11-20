@@ -51,6 +51,7 @@ private:
 
     QVector<qreal> norm_data;
     QVector<qreal> unif_data;
+    QVector<qreal> weather_data;
 
     bool show_cumulative;
     std::string dist_type;

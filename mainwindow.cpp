@@ -236,7 +236,7 @@ void MainWindow::on_bin_slider_sliderReleased()
     }
 
     else if(dist_type == "real") {
-        on_rt_button_toggled(true);
+        graphData(weather_data);
     }
 }
 
@@ -251,8 +251,10 @@ void MainWindow::on_bin_slider_valueChanged(int value)
 
 void MainWindow::on_max_slider_sliderReleased()
 {
-    if(dist_type == "real")
-         on_rt_button_toggled(true);
+    if(dist_type == "real") {
+        weather_data.clear();
+        on_rt_button_toggled(true);
+     }
 }
 
 void MainWindow::on_max_slider_valueChanged(int value)
@@ -263,8 +265,6 @@ void MainWindow::on_max_slider_valueChanged(int value)
 void MainWindow::graphNOAAData(QNetworkReply *reply) {
 
        QThread *processThread = new QThread;
-
-       QVector<qreal> weather_data;
 
        processThread->start();
 
