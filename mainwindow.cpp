@@ -262,11 +262,16 @@ void MainWindow::on_max_slider_valueChanged(int value)
 
 void MainWindow::managerFinished(QNetworkReply *reply) {
 
+       QThread *processThread = new QThread;
+
+       QVector<qreal> weather_data;
+
+       processThread->start();
+
        QString answer = reply->readAll();
 
        QJsonDocument doc = QJsonDocument::fromJson(answer.toUtf8());
 
-       QVector<qreal> weather_data;
        for(int i = 0; i < ui->max_slider->value(); i++) {
            double value = doc["results"][i]["value"].toDouble();
            //qDebug() << value;
@@ -276,5 +281,9 @@ void MainWindow::managerFinished(QNetworkReply *reply) {
            ui->pt_label->setText("PtsRecv = " + QString::number(weather_data.length()));
        }
 
+       processThread->terminate();
+
        graphData(weather_data);
+
+
 }
