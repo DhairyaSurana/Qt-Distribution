@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     manager = new QNetworkAccessManager();
     QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(managerFinished(QNetworkReply*)));
+                     this, SLOT(graphNOAAData(QNetworkReply*)));
 
 }
 
@@ -199,7 +199,7 @@ void MainWindow::on_norm_button_toggled(bool checked)
     }
 }
 
-// Graphs the weight distribution of csv file when "real" button is toggled
+// Initiates REST query to obtain NOAA precipitation data
 void MainWindow::on_rt_button_toggled(bool checked)
 {
     if (checked) {
@@ -260,7 +260,7 @@ void MainWindow::on_max_slider_valueChanged(int value)
     ui->maxp_num->setText("MAXP = " + QString::number(value));
 }
 
-void MainWindow::managerFinished(QNetworkReply *reply) {
+void MainWindow::graphNOAAData(QNetworkReply *reply) {
 
        QThread *processThread = new QThread;
 

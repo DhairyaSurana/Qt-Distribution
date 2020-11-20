@@ -42,7 +42,7 @@ private slots:
     // Max Slider + NOAA REST API Functions
     void on_max_slider_valueChanged(int value);
     void on_max_slider_sliderReleased();
-    void managerFinished(QNetworkReply *reply);
+    void graphNOAAData(QNetworkReply *reply);
 
 
 
